@@ -13,6 +13,14 @@ implementation {
     // Visual debugging
     components LedsC;
 
+    // Sampling timer.
+    components new TimerMilliC() as Timer;
+
+    // Sensors.
+    components new SensirionSht11C() as TempHumSensor; // Humidity and Temperature
+    components new HamamatsuS1087ParC() as LightSensor; // Light
+
+
     //Boot 
     App.Boot -> MainC;
 
@@ -20,4 +28,8 @@ implementation {
     App.AMControl -> ActiveMessageC;
     App.Receive -> AMReceiverC;
     App.Leds -> LedsC;
+    App.SamplingTimer -> Timer;
+    App.TemperatureRead -> TempHumSensor.Temperature;
+    App.HumidityRead ->  TempHumSensor.Humidity;
+    App.LightRead -> LightSensor;
 }

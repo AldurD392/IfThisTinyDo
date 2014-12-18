@@ -1,0 +1,3 @@
+COMPONENT=PeerAppC
+include $(MAKERULES)
+CFLAGS=-I..

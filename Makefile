@@ -1,2 +1,0 @@
-COMPONENT=basicStructAppC
-include $(MAKERULES)

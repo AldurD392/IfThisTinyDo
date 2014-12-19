@@ -54,7 +54,7 @@ module PeerC {
             // Set the new Rule.
             rule = rulePayload;
 
-            call Leds.set(2);
+            // call Leds.set(2);
 
             // Start sampling timer.
             call SamplingTimer.startPeriodic(TIME_SAMPLING_MS);
@@ -76,6 +76,7 @@ module PeerC {
 
             case SENSOR_LIGHT:
                 call LightRead.read();
+                call Leds.set(1);
                 break;
 
             default:
@@ -99,7 +100,7 @@ module PeerC {
                 break;
 
             case EXPRESSION_LOWER:
-
+                call Leds.set(3);
                 if(rule->threshold > val) return TRUE;
                 break;
 
@@ -120,6 +121,7 @@ module PeerC {
         if(result == SUCCESS){
             if (checkRule(val)){
                 // DO ACTION
+                call Leds.set(7);
             }
         }
         else{

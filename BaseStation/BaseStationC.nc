@@ -55,7 +55,7 @@ implementation
         if (!busy) {
             RuleMsg* rulePayload = (RuleMsg*)(call Packet.getPayload(&pkt, sizeof(RuleMsg)));
             rulePayload->sensor = SENSOR_LIGHT;
-            rulePayload->threshold = 20;
+            rulePayload->threshold = 0;
             rulePayload->operator = EXPRESSION_LOWER;
             rulePayload->action = ACTION_LED_ON;
 

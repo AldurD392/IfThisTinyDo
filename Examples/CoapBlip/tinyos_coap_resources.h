@@ -38,7 +38,7 @@
 #define SENSOR_VALUE_INVALID 0xFFFE
 #define SENSOR_NOT_AVAILABLE 0xFFFF
 
-//uri properties for uri<->key conversion
+// uri properties for uri<->key conversion
 typedef struct key_uri
 {
     uint8_t key;
@@ -58,29 +58,9 @@ enum {
     COAP_NO_SUCH_RESOURCE = 0xff
 };
 
-typedef nx_struct val_all
-{
-  nx_uint8_t id_t:4;
-  nx_uint8_t length_t:4;
-  nx_uint16_t temp;
-  nx_uint8_t id_h:4;
-  nx_uint8_t length_h:4;
-  nx_uint16_t hum;
-  nx_uint8_t id_v:4;
-  nx_uint8_t length_v:4;
-  nx_uint16_t volt;
-} val_all_t;
-
-typedef nx_struct config_t
-{
-  nx_uint8_t version;
-  nx_uint8_t EUI64[8];
-  nx_uint8_t KEY128[16];
-} config_t;
-
 key_uri_t uri_key_map[NUM_URIS] = {
-    { KEY_LED,  "l",  sizeof("l") ,
-      COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 1, 1, 1},
+    { KEY_LED,  "rl",  sizeof("rl") ,
+        COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 1, 1, 1},
 };
 
 #endif

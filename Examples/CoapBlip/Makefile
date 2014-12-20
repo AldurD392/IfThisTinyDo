@@ -68,5 +68,5 @@ CFLAGS += -DCOAP_CLIENT_PORT=61617L
 # client IPv6 destination address
 CFLAGS += -DCOAP_CLIENT_DEST=\"fec0::100\"
 
-CFLAGS += -I.
+CFLAGS += -I. 
 include $(MAKERULES)

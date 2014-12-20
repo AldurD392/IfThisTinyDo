@@ -30,35 +30,51 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "StorageVolumes.h"
-#include <lib6lowpan/6lowpan.h>
-#include "tinyos_coap_resources.h"
+#include <pdu.h>
 
-configuration CoapBlipC {
-
+generic module CoapRuleResourceP(uint8_t uri_key) {
+  provides interface ReadResource;
+  provides interface WriteResource;
+  uses interface Leds;
 } implementation {
-  components MainC;
-  components LedsC;
-  components CoapBlipP;
-  components LibCoapAdapterC;
-  components IPStackC;
 
-  CoapBlipP.Boot -> MainC;
-  CoapBlipP.Leds -> LedsC;
-  CoapBlipP.RadioControl ->  IPStackC;
-  CoapBlipP.Init <- MainC.SoftwareInit;
+  bool lock = FALSE;
+  coap_tid_t temp_id;
 
-  components RPLRoutingC;
+  void task turnOnLeds() {
+    uint8_t val = call Leds.get();
+    call Leds.set(7);
+    lock = FALSE;
+    signal ReadResource.getDone(SUCCESS, temp_id, 0,
+				(uint8_t*)&val, sizeof(uint8_t));
+  };
 
-  components CoapUdpServerC;
-  components new UdpSocketC() as UdpServerSocket;
-  CoapBlipP.CoAPServer -> CoapUdpServerC;
-  CoapUdpServerC.LibCoapServer -> LibCoapAdapterC.LibCoapServer;
-  CoapUdpServerC.Init <- MainC.SoftwareInit;
-  LibCoapAdapterC.UDPServer -> UdpServerSocket;
+  command int ReadResource.get(coap_tid_t id) {
+    if (lock == FALSE) {
+      lock = TRUE;
 
-  components new CoapRuleResourceC(KEY_LED) as CoapRuleResource;
-  CoapRuleResource.Leds -> LedsC;
-  CoapUdpServerC.ReadResource[KEY_LED]  -> CoapRuleResource.ReadResource;
-  CoapUdpServerC.WriteResource[KEY_LED] -> CoapRuleResource.WriteResource;
+      temp_id = id;
+      post turnOnLeds();
+      return COAP_SPLITPHASE;
+    } else {
+      return COAP_RESPONSE_503;
+    }
+  }
+
+  void task setLedDone() {
+    lock = FALSE;
+    signal WriteResource.putDone(SUCCESS, temp_id, 0);
+  };
+
+  command int WriteResource.put(uint8_t *val, size_t buflen, coap_tid_t id) {
+      if (lock == FALSE) {
+          lock = TRUE;
+          temp_id = id;
+          call Leds.set(0);
+          post setLedDone();
+          return COAP_SPLITPHASE;
+      } else {
+          return COAP_RESPONSE_503;
+      }
+  }
 }

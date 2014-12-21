@@ -30,34 +30,16 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <lib6lowpan/6lowpan.h>
-#include "tinyos_coap_resources.h"
-
-configuration CoapBlipC {
-
+generic configuration CoapRuleResourceC(uint8_t uri_key) {
+    provides interface ReadResource;
+    provides interface WriteResource;
+    uses interface Leds;
+    uses interface Timer<TMilli> as SamplingTimer;
 } implementation {
-  components MainC;
-  components LedsC;
-  components CoapBlipP;
-  components LibCoapAdapterC;
-  components IPStackC;
+    components new CoapRuleResourceP(uri_key) as CoapRuleResourceP;
 
-  CoapBlipP.Boot -> MainC;
-  CoapBlipP.Leds -> LedsC;
-  CoapBlipP.RadioControl ->  IPStackC;
-  CoapBlipP.Init <- MainC.SoftwareInit;
-
-  components RPLRoutingC;
-
-  components CoapUdpServerC;
-  components new UdpSocketC() as UdpServerSocket;
-  CoapBlipP.CoAPServer -> CoapUdpServerC;
-  CoapUdpServerC.LibCoapServer -> LibCoapAdapterC.LibCoapServer;
-  CoapUdpServerC.Init <- MainC.SoftwareInit;
-  LibCoapAdapterC.UDPServer -> UdpServerSocket;
-
-  components new CoapRuleResourceC(KEY_LED) as CoapRuleResource;
-  CoapRuleResource.Leds -> LedsC;
-  CoapUdpServerC.ReadResource[KEY_LED]  -> CoapRuleResource.ReadResource;
-  CoapUdpServerC.WriteResource[KEY_LED] -> CoapRuleResource.WriteResource;
+    ReadResource = CoapRuleResourceP;
+    WriteResource = CoapRuleResourceP;
+    Leds = CoapRuleResourceP;
+    SamplingTimer = CoapRuleResourceP;
 }

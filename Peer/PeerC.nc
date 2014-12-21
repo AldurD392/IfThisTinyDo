@@ -1,57 +1,56 @@
 #include "IfThisTinyDo.h"
+#include "tinyos_coap_resources.h"
+
+#include <IPDispatch.h>
+#include <lib6lowpan/lib6lowpan.h>
+#include <lib6lowpan/ip.h>
 
 module PeerC {
     uses {
         interface Boot;
-        
-        // Useful for visual debugging.
-        interface Leds;
 
+        // Radio and Coap
+        interface SplitControl as RadioControl;
+        interface CoAPServer;
     }
-} implementation {
 
-    uint32_t rule = 0;
+    provides interface Init;
+} implementation {
 
     // Boot event.
     event void Boot.booted() {
-        dbg("Boot", "Booting.");
-    }
+        uint8_t i;
+        call RadioControl.start();
 
-    // Eval rule.
+        // needs to be before registerResource to setup context:
+        call CoAPServer.bind(COAP_SERVER_PORT);
 
-    uint8_t getSensor(uint32_t ruleCommand){
-
-        uint8_t sensor = ruleCommand << 2;
-        return sensor;
-
-    }
-
-    uint8_t getOperator(uint32_t ruleCommand){
-
-        uint8_t a = (ruleCommand << 2) << 2;
-        return a;
-
-    }
-
-    uint16_t getThreshold(uint32_t ruleCommand){
-
-        uint16_t threshold = (ruleCommand << 4) << 16;
-        return threshold;
-
-    }
-
-    uint8_t getAction(uint32_t ruleCommand){
-        
-        uint8_t action = (ruleCommand << 20) << 3;
-        return action;
-
-    }
-
-    uint8_t getArgument(uint32_t ruleCommand){
-
-        uint8_t argument = (ruleCommand << 22) << 2;
-        return argument;
+        call CoAPServer.registerWellknownCore();
+        for (i=0; i < NUM_URIS; i++) {
+            call CoAPServer.registerResource(
+                    uri_key_map[i].uri,
+                    uri_key_map[i].urilen - 1,
+                    uri_key_map[i].mediatype,
+                    uri_key_map[i].writable,
+                    uri_key_map[i].splitphase,
+                    uri_key_map[i].immediately);
+        }
     }
 
 
+    // Init event.
+    command error_t Init.init() {
+        return SUCCESS;
+    }
+
+    // And radios...
+    event void RadioControl.startDone(error_t e) {
+        if (e != SUCCESS) {
+            call RadioControl.start();
+        }
+    }
+
+    event void RadioControl.stopDone(error_t e) {
+
+    }
 }

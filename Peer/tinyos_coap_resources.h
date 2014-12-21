@@ -30,34 +30,35 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <lib6lowpan/6lowpan.h>
-#include "tinyos_coap_resources.h"
+#ifndef _COAP_TINYOS_COAP_RESOURCES_H_
+#define _COAP_TINYOS_COAP_RESOURCES_H_
 
-configuration CoapBlipC {
+#include <pdu.h>
 
-} implementation {
-  components MainC;
-  components LedsC;
-  components CoapBlipP;
-  components LibCoapAdapterC;
-  components IPStackC;
+#define SENSOR_VALUE_INVALID 0xFFFE
+#define SENSOR_NOT_AVAILABLE 0xFFFF
 
-  CoapBlipP.Boot -> MainC;
-  CoapBlipP.Leds -> LedsC;
-  CoapBlipP.RadioControl ->  IPStackC;
-  CoapBlipP.Init <- MainC.SoftwareInit;
+// uri properties for uri<->key conversion
+typedef struct key_uri
+{
+    uint8_t key;
+    char uri[MAX_URI_LENGTH];
+    uint8_t urilen;
+    uint8_t mediatype;
+    uint8_t writable:1;
+    uint8_t splitphase:1;
+    uint8_t immediately:1;
+} key_uri_t;
 
-  components RPLRoutingC;
+// User defined resources
+enum {
+    KEY_RULE,
+    COAP_NO_SUCH_RESOURCE = 0xff
+};
 
-  components CoapUdpServerC;
-  components new UdpSocketC() as UdpServerSocket;
-  CoapBlipP.CoAPServer -> CoapUdpServerC;
-  CoapUdpServerC.LibCoapServer -> LibCoapAdapterC.LibCoapServer;
-  CoapUdpServerC.Init <- MainC.SoftwareInit;
-  LibCoapAdapterC.UDPServer -> UdpServerSocket;
+key_uri_t uri_key_map[NUM_URIS] = {
+    { KEY_RULE,  "rl",  sizeof("rl") ,
+        COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 1, 1, 1},
+};
 
-  components new CoapRuleResourceC(KEY_LED) as CoapRuleResource;
-  CoapRuleResource.Leds -> LedsC;
-  CoapUdpServerC.ReadResource[KEY_LED]  -> CoapRuleResource.ReadResource;
-  CoapUdpServerC.WriteResource[KEY_LED] -> CoapRuleResource.WriteResource;
-}
+#endif

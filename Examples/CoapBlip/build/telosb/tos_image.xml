@@ -1,13 +1,13 @@
 <tos_image>
   <ident>
-    <timestamp>549552EDL</timestamp>
-    <hostname>aldursmacarch</hostname>
-    <appname>CoapBlipC</appname>
-    <deluge_support>no</deluge_support>
-    <username>aldur</username>
     <userhash>F186287DL</userhash>
     <platform>telosb</platform>
-    <uidhash>49783CA0L</uidhash>
+    <hostname>aldursmacarch</hostname>
+    <timestamp>5496F1A3L</timestamp>
+    <uidhash>75D60CDDL</uidhash>
+    <username>aldur</username>
+    <appname>CoapBlipC</appname>
+    <deluge_support>no</deluge_support>
   </ident>
   <image format="ihex">
 :104000005542200135D0085A8245102C31400039E4

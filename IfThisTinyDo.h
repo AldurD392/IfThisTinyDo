@@ -5,7 +5,7 @@
 // Costants.
 enum {
     AM_IFTHISTINYDO = 6,
-    TIME_SAMPLING_MS = 250,
+    TIME_SAMPLING_MS = 1000,
 
     // Rule masks.
     // Sensors

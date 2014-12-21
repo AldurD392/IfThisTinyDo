@@ -12,7 +12,7 @@ implementation {
     // Coap Library Components
     components LibCoapAdapterC;
     components IPStackC;
-    components RPLRoutingC;
+    components RPLRoutingC;  // Can I be deleted?
     components CoapUdpServerC;
     components new UdpSocketC() as UdpServerSocket;
 
@@ -24,6 +24,7 @@ implementation {
     // Sensors components
     components new SensirionSht11C() as TempHumSensor; // Humidity and Temperature
     components new HamamatsuS1087ParC() as LightSensor; // Light
+    components new VoltageC() as VoltSensor;
 
     // Wiring
     // Boot
@@ -42,4 +43,8 @@ implementation {
     CoapUdpServerC.ReadResource[KEY_RULE]  -> CoapRuleResource.ReadResource;
     CoapUdpServerC.WriteResource[KEY_RULE] -> CoapRuleResource.WriteResource;
     CoapRuleResource.SamplingTimer -> SamplingTimer;
+    CoapRuleResource.TempSensor -> TempHumSensor.Temperature;
+    CoapRuleResource.HumSensor -> TempHumSensor.Humidity;
+    CoapRuleResource.LightSensor -> LightSensor;
+    CoapRuleResource.VoltSensor -> VoltSensor;
 }

@@ -35,8 +35,16 @@
 generic module CoapRuleResourceP(uint8_t uri_key) {
     provides interface ReadResource;
     provides interface WriteResource;
-    uses interface Leds;
-    uses interface Timer<TMilli> as SamplingTimer;
+   
+    uses {
+        interface Leds;
+        interface Read<uint16_t> as LightSensor;
+        interface Read<uint16_t> as HumSensor;
+        interface Read<uint16_t> as TempSensor;
+        interface Read<uint16_t> as VoltSensor;
+        interface Timer<TMilli> as SamplingTimer;
+    }
+
 } implementation {
 
     bool lock = FALSE;
@@ -72,15 +80,10 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
         signal WriteResource.putDone(SUCCESS, temp_id, 0);
     };
 
-    event void SamplingTimer.fired() {
-        call Leds.set(3);
-    }
-
     command int WriteResource.put(uint8_t *val, size_t buflen, coap_tid_t id) {
         if (lock == FALSE && buflen == sizeof(uint32_t)) {
             lock = TRUE;
             temp_id = id;
-            call Leds.set(1);
             memcpy(&temp_rule, val, buflen);
             post setRuleDone();
             return COAP_SPLITPHASE;
@@ -90,28 +93,81 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
     }
 
     // Helper functions to eval the rules.
-    uint8_t getSensor(uint32_t ruleCommand) {
-        uint8_t sensor = ruleCommand << 2;
-        return sensor;
+    void performSensorRead() {
+        uint8_t sensor = (rule >> 30) & 0x3;  // 2 first bits
+    
+        if (sensor == SENSOR_TEMPERATURE) {
+            call TempSensor.read();
+        } else if (sensor == SENSOR_HUMIDITY) {
+            call HumSensor.read();
+        } else if (sensor == SENSOR_LIGHT) {
+            call LightSensor.read();
+        } else {  // SENSOR_VOLTAGE
+            call VoltSensor.read();
+        }
     }
 
-    uint8_t getOperator(uint32_t ruleCommand) {
-        uint8_t operator = (ruleCommand << 2) << 2;
-        return operator;
+    event void SamplingTimer.fired() {
+        performSensorRead();
     }
 
-    uint16_t getThreshold(uint32_t ruleCommand) {
-        uint16_t threshold = (ruleCommand << 4) << 16;
-        return threshold;
+    bool evalStatment(uint16_t val) {
+        uint8_t operator = (rule >> 28) & 0x3;
+        uint16_t threshold = (rule >> 12) & 0xFFFF;
+
+        if (operator == EXPRESSION_LOWER) {
+            return (val < threshold);
+        } else if (operator == EXPRESSION_EQUAL) {
+            return (val == threshold);
+        } else if (operator == EXPRESSION_GREATER) {
+            return (val > threshold);
+        } 
+
+        // Something went wrong here!
+        dbg("Error", "Invalid command expression received!");
+        return FALSE;
     }
 
-    uint8_t getAction(uint32_t ruleCommand) {
-        uint8_t action = (ruleCommand << 20) << 3;
-        return action;
+    void performAction() {
+        uint8_t action = (rule >> 9) & 0x07;
+
+        if (action == LED) {
+            call Leds.set((rule >> 6) & 0x07);
+        } else {  // Other action for future implementations / motes
+            dbg("Error", "Unkonwn action received!");
+            call Leds.set(4);
+        }
     }
 
-    uint8_t getArgument(uint32_t ruleCommand) {
-        uint8_t argument = (ruleCommand << 22) << 3;
-        return argument;
+   event void LightSensor.readDone(error_t result, uint16_t val) {
+        if (result == SUCCESS) {
+            if (evalStatment(val)) {
+                performAction();                           
+            }
+        } 
+    }
+
+    event void HumSensor.readDone(error_t result, uint16_t val) {
+        if (result == SUCCESS) {
+            if (evalStatment(val)) {
+                performAction();                           
+            }
+        } 
+    }
+
+    event void TempSensor.readDone(error_t result, uint16_t val) {
+        if (result == SUCCESS) {
+            if (evalStatment(val)) {
+                performAction();                           
+            }
+        }
+    }
+
+    event void VoltSensor.readDone(error_t result, uint16_t val) {
+        if (result == SUCCESS) {
+            if (evalStatment(val)) {
+                performAction();                           
+            }
+        } 
     }
 }

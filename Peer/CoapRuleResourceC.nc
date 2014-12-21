@@ -33,13 +33,23 @@
 generic configuration CoapRuleResourceC(uint8_t uri_key) {
     provides interface ReadResource;
     provides interface WriteResource;
-    uses interface Leds;
-    uses interface Timer<TMilli> as SamplingTimer;
+    uses {
+        interface Leds;
+        interface Timer<TMilli> as SamplingTimer;
+        interface Read<uint16_t> as LightSensor;
+        interface Read<uint16_t> as HumSensor;
+        interface Read<uint16_t> as TempSensor;
+        interface Read<uint16_t> as VoltSensor;
+    }
 } implementation {
     components new CoapRuleResourceP(uri_key) as CoapRuleResourceP;
 
     ReadResource = CoapRuleResourceP;
     WriteResource = CoapRuleResourceP;
-    Leds = CoapRuleResourceP;
-    SamplingTimer = CoapRuleResourceP;
+    Leds = CoapRuleResourceP.Leds;
+    SamplingTimer = CoapRuleResourceP.SamplingTimer;
+    LightSensor = CoapRuleResourceP.LightSensor;
+    HumSensor = CoapRuleResourceP.HumSensor;
+    TempSensor = CoapRuleResourceP.TempSensor;
+    VoltSensor = CoapRuleResourceP.VoltSensor;
 }

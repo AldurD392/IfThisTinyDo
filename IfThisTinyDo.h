@@ -26,8 +26,8 @@ enum {
      * An example of operation: 
      * - Check the light sensor (10)
      * - Check for light lower (00) than the maximum treshold (16 ones)
-     * - When done, turn on all the three leds (00 111).
-     * 10 00 1111111111111111 00 111 0000000
+     * - When done, turn on all the three leds (000 111).
+     * 10 00 1111111111111111 000 111 000000
      */
 };
 

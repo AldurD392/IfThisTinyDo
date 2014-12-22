@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "IfThisTinyDo.h"
 
-int main(int argc, char* argv) {
+int main(int argc, char** argv) {
     uint32_t command = 0;
     
     command |= SENSOR_LIGHT;

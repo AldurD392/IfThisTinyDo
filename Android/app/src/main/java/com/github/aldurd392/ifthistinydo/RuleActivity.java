@@ -99,12 +99,14 @@ public class RuleActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     public void onSendRuleClicked(View view) {
-        Log.d("IFTD", "Uri: " + this.uri);
-        Log.d("IFTD", "Sensor: " + this.sensor);
-        Log.d("IFTD", "Operator: " + this.expression);
-        Log.d("IFTD", "Action: " + this.action);
-        Log.d("IFTD", "Argument: " + this.argument);
+        Log.d("ITTD", "Uri: " + this.uri);
+        Log.d("ITTD", "Sensor: " + this.sensor);
+        Log.d("ITTD", "Operator: " + this.expression);
+        Log.d("ITTD", "Action: " + this.action);
+        Log.d("ITTD", "Argument: " + this.argument);
+
     }
 
     public void ledToggleSelected(View view) {
@@ -112,11 +114,28 @@ public class RuleActivity extends ActionBarActivity
         boolean isChecked = toggleButton.isChecked();
 
         if (toggleButton == findViewById(R.id.redLedSwitch)) {
-            this.argument |= isChecked ? 0x01 : 0x00;
+
+            if (isChecked) { // add bit
+                this.argument |= 0x01;
+            } else { // remove bit
+                this.argument &= 0x06;
+            }
+
         } else if (toggleButton == findViewById(R.id.yellowLedSwitch)) {
-            this.argument |= isChecked ? 0x02 : 0x00;
+
+            if (isChecked) { // add bit
+                this.argument |= 0x02;
+            } else { // remove bit
+                this.argument &= 0x05;
+            }
+
         } else {  // blueLedSwitch
-            this.argument |= isChecked ? 0x04 : 0x00;
+
+            if (isChecked) { // add bit
+                this.argument |= 0x04;
+            } else { // remove bit
+                this.argument &= 0x03;
+            }
         }
     }
 

@@ -99,6 +99,27 @@ public class RuleActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public int makeRule(){
+
+        int rule = 0;
+
+        rule |= this.sensor;
+        rule <<= 2;
+
+        rule |= this.expression;
+        rule <<= 16;
+
+        rule |= this.threshold;
+        rule <<= 3;
+
+        rule |= this.action;
+        rule <<=3;
+
+        rule |= this.argument;
+        rule <<=6;
+
+        return rule;
+    }
 
     public void onSendRuleClicked(View view) {
         Log.d("ITTD", "Uri: " + this.uri);
@@ -106,6 +127,11 @@ public class RuleActivity extends ActionBarActivity
         Log.d("ITTD", "Operator: " + this.expression);
         Log.d("ITTD", "Action: " + this.action);
         Log.d("ITTD", "Argument: " + this.argument);
+
+        int rule;
+        rule = makeRule();
+
+        Log.d("ITTD", "Command: " + Integer.toBinaryString(rule));
 
     }
 

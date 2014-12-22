@@ -2,11 +2,26 @@ package com.github.aldurd392.ifthistinydo;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.*;
 
 
-public class RuleActivity extends ActionBarActivity {
+public class RuleActivity extends ActionBarActivity
+                            implements RadioGroup.OnCheckedChangeListener {
+
+    protected byte sensor = 0;
+    protected byte expression = 0;
+    protected byte argument = 0;
+
+    protected final byte action = action_const.getActionConst(action_const.LED);  // In this first implementation action is fixed!
+
+    public String uri;
+    public short threshold = 0;
 
     public enum sensor_const {
         SENSOR_TEMPERATURE, SENSOR_HUMIDITY, SENSOR_LIGHT, SENSOR_VOLTAGE;
@@ -55,19 +70,12 @@ public class RuleActivity extends ActionBarActivity {
         }
     }
 
-    protected byte sensor = 0;
-    protected byte expression = 0;
-    protected short threshold = 0;
-    protected byte action = 0;
-    protected byte argument = 0;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rule);
+        this.setListeners();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,4 +99,93 @@ public class RuleActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onSendRuleClicked(View view) {
+        Log.d("IFTD", "Uri: " + this.uri);
+        Log.d("IFTD", "Sensor: " + this.sensor);
+        Log.d("IFTD", "Operator: " + this.expression);
+        Log.d("IFTD", "Action: " + this.action);
+        Log.d("IFTD", "Argument: " + this.argument);
+    }
+
+    public void ledToggleSelected(View view) {
+        Switch toggleButton = (Switch) view;
+        boolean isChecked = toggleButton.isChecked();
+
+        if (toggleButton == findViewById(R.id.redLedSwitch)) {
+            this.argument |= isChecked ? 0x01 : 0x00;
+        } else if (toggleButton == findViewById(R.id.yellowLedSwitch)) {
+            this.argument |= isChecked ? 0x02 : 0x00;
+        } else {  // blueLedSwitch
+            this.argument |= isChecked ? 0x04 : 0x00;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        /* Called when a radio button in a group is checked. */
+        switch(checkedId)
+        {
+            case R.id.lightRadioButton:
+                this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_LIGHT);
+                break;
+            case R.id.humRadioButton:
+                this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_HUMIDITY);
+                break;
+            case R.id.voltageRadioButton:
+                this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_VOLTAGE);
+                break;
+            case R.id.tempRadioButton:
+                this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_VOLTAGE);
+                break;
+            case R.id.lessThanRadioButton:
+                this.expression = expression_const.getExpressionConst(expression_const.EXPRESSION_LOWER);
+                break;
+            case R.id.equalRadioButton:
+                this.expression = expression_const.getExpressionConst(expression_const.EXPRESSION_EQUAL);
+                break;
+            case R.id.greaterThanRadioButton:
+                this.expression = expression_const.getExpressionConst(expression_const.EXPRESSION_GREATER);
+                break;
+        }
+    }
+
+    public void setListeners() {
+        RadioGroup sensorsRadioGroup = (RadioGroup) findViewById(R.id.sensorRadioGroup);
+        sensorsRadioGroup.setOnCheckedChangeListener(this);
+
+        RadioGroup operatorRadioGroup = (RadioGroup) findViewById(R.id.operatorRadioGroup);
+        operatorRadioGroup.setOnCheckedChangeListener(this);
+
+        final RuleActivity t = this;
+
+        EditText uriText = (EditText) findViewById(R.id.uriTextField);
+        uriText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                t.uri = s.toString();  // Piggy thing!
+            }
+        });
+
+        EditText thresholdText = (EditText) findViewById(R.id.thresholdTextField);
+       thresholdText.addTextChangedListener(new TextWatcher() {
+           @Override
+           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+           }
+
+           @Override
+           public void onTextChanged(CharSequence s, int start, int before, int count) {
+           }
+
+           @Override
+           public void afterTextChanged(Editable s) {
+               t.threshold = Short.parseShort(s.toString());  // Piggy thing!
+           }
+       });
+    }
 }

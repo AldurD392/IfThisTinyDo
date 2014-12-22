@@ -15,5 +15,6 @@
     <string name="redLedText">Red Led</string>
     <string name="yellowLedText">Yellow Led</string>
     <string name="maximumThresholdValue">Maximum possibl evalue is 65535.</string>
+    <string name="uriPlaceholderText">http://node.something.net/foo</string>
 
 </resources>

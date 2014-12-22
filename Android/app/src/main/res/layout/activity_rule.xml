@@ -24,7 +24,7 @@
             android:layout_below="@+id/uriTextView"
             android:layout_centerHorizontal="true"
             android:inputType="textUri|textWebEmailAddress"
-            android:hint="http://node.something.net/foo"/>
+            android:hint="@string/uriPlaceholderText"/>
 
     <View
             android:layout_width="fill_parent"
@@ -99,7 +99,8 @@
             android:text="@string/sendRuleButton"
             android:id="@+id/button"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"
+            android:onClick="onSendRuleClicked"/>
 
     <TextView
             android:layout_width="fill_parent"
@@ -116,7 +117,7 @@
             android:layout_below="@+id/thresholdTextView"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal"
-            android:id="@+id/operatorRadioButton"
+            android:id="@+id/operatorRadioGroup"
             >
 
         <RadioButton
@@ -153,7 +154,7 @@
             android:inputType="number"
             android:ems="10"
             android:id="@+id/thresholdTextField"
-            android:layout_below="@+id/operatorRadioButton"
+            android:layout_below="@+id/operatorRadioGroup"
             android:layout_centerHorizontal="true"/>
 
     <TextView
@@ -188,7 +189,8 @@
             android:id="@+id/blueLedSwitch"
             android:layout_below="@+id/thenTextView"
             android:layout_alignParentStart="true"
-            android:checked="false"/>
+            android:checked="false"
+            android:onClick="ledToggleSelected"/>
 
     <Switch
             android:layout_width="wrap_content"
@@ -197,6 +199,7 @@
             android:id="@+id/yellowLedSwitch"
             android:layout_below="@+id/thenTextView"
             android:layout_centerHorizontal="true"
+            android:onClick="ledToggleSelected"
             android:checked="false"/>
 
     <Switch
@@ -207,6 +210,7 @@
             android:checked="false"
             android:layout_below="@+id/thenTextView"
             android:layout_alignParentEnd="true"
+            android:onClick="ledToggleSelected"
             />
 
 </RelativeLayout>

@@ -21,7 +21,7 @@ public class RuleActivity extends ActionBarActivity
     protected final byte action = action_const.getActionConst(action_const.LED);  // In this first implementation action is fixed!
 
     public String uri;
-    public short threshold = 0;
+    public int threshold = 0;
 
     public enum sensor_const {
         SENSOR_TEMPERATURE, SENSOR_HUMIDITY, SENSOR_LIGHT, SENSOR_VOLTAGE;
@@ -109,7 +109,7 @@ public class RuleActivity extends ActionBarActivity
         rule |= this.expression;
         rule <<= 16;
 
-        rule |= this.threshold;
+        rule |= this.threshold & 0xffff;
         rule <<= 3;
 
         rule |= this.action;
@@ -124,6 +124,7 @@ public class RuleActivity extends ActionBarActivity
     public void onSendRuleClicked(View view) {
         Log.d("ITTD", "Uri: " + this.uri);
         Log.d("ITTD", "Sensor: " + this.sensor);
+        Log.d("ITTD", "Threshold: " + this.threshold);
         Log.d("ITTD", "Operator: " + this.expression);
         Log.d("ITTD", "Action: " + this.action);
         Log.d("ITTD", "Argument: " + this.argument);
@@ -180,7 +181,7 @@ public class RuleActivity extends ActionBarActivity
                 this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_VOLTAGE);
                 break;
             case R.id.tempRadioButton:
-                this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_VOLTAGE);
+                this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_TEMPERATURE);
                 break;
             case R.id.lessThanRadioButton:
                 this.expression = expression_const.getExpressionConst(expression_const.EXPRESSION_LOWER);
@@ -229,7 +230,8 @@ public class RuleActivity extends ActionBarActivity
 
            @Override
            public void afterTextChanged(Editable s) {
-               t.threshold = Short.parseShort(s.toString());  // Piggy thing!
+               t.threshold = Integer.parseInt(s.toString());  // Piggy thing!
+
            }
        });
     }

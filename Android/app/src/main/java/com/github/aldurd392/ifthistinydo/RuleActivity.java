@@ -1,14 +1,26 @@
 package com.github.aldurd392.ifthistinydo;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Switch;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.os.AsyncTask;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class RuleActivity extends ActionBarActivity
@@ -121,7 +133,7 @@ public class RuleActivity extends ActionBarActivity
         return rule;
     }
 
-    public void onSendRuleClicked(View view) {
+    public void onSendRuleClicked(View view) throws MalformedURLException {
         Log.d("ITTD", "Uri: " + this.uri);
         Log.d("ITTD", "Sensor: " + this.sensor);
         Log.d("ITTD", "Threshold: " + this.threshold);
@@ -134,6 +146,42 @@ public class RuleActivity extends ActionBarActivity
 
         Log.d("ITTD", "Command: " + Integer.toBinaryString(rule));
 
+        new HttpCommandSend().execute();
+
+    }
+
+    public class HttpCommandSend extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] params){
+
+            URL url = null;
+            try {
+                url = new URL("http://www.google.it");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+
+            HttpPut httpPut = new HttpPut(url.toString());
+            HttpResponse response = null;
+            try{
+                response = httpClient.execute(httpPut);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            int return_code = 0;
+            try{
+                return_code = response.getStatusLine().getStatusCode();
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            System.out.println(return_code);
+
+            return null;
+        }
     }
 
     public void ledToggleSelected(View view) {

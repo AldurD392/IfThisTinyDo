@@ -4,7 +4,7 @@ CFLAGS+=-I..
 
 all: ruleBuilder
 
-ruleBuilder: 
+ruleBuilder: ruleBuilder.c
 		$(CC) $(CFLAGS) ruleBuilder.c -o ruleBuilder 
 
 .PHONY: clean

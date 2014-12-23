@@ -1,16 +1,14 @@
 package com.github.aldurd392.ifthistinydo;
 
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.Switch;
+import android.widget.*;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -113,41 +111,34 @@ public class RuleActivity extends ActionBarActivity
 
     public int makeRule(){
 
-        int rule = 0;
+        int rule = 0xFFFFFFFF;
 
-        rule |= this.sensor;
+        rule &= this.sensor;
         rule <<= 2;
 
         rule |= this.expression;
         rule <<= 16;
 
-        rule |= this.threshold & 0xffff;
+        System.out.println(this.threshold);
+
+        rule |= this.threshold & 0xFFFF;
         rule <<= 3;
 
         rule |= this.action;
-        rule <<=3;
+        rule <<= 3;
 
         rule |= this.argument;
-        rule <<=6;
+        rule <<= 6;
 
         return rule;
     }
 
     public void onSendRuleClicked(View view) throws MalformedURLException {
-        Log.d("ITTD", "Uri: " + this.uri);
-        Log.d("ITTD", "Sensor: " + this.sensor);
-        Log.d("ITTD", "Threshold: " + this.threshold);
-        Log.d("ITTD", "Operator: " + this.expression);
-        Log.d("ITTD", "Action: " + this.action);
-        Log.d("ITTD", "Argument: " + this.argument);
-
         int rule;
         rule = makeRule();
-
         Log.d("ITTD", "Command: " + Integer.toBinaryString(rule));
 
         new HttpCommandSend().execute();
-
     }
 
     public class HttpCommandSend extends AsyncTask {
@@ -266,20 +257,30 @@ public class RuleActivity extends ActionBarActivity
             }
         });
 
-        EditText thresholdText = (EditText) findViewById(R.id.thresholdTextField);
-       thresholdText.addTextChangedListener(new TextWatcher() {
+        /* Set default values: */
+        this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_VOLTAGE);
+        this.expression = expression_const.getExpressionConst(expression_const.EXPRESSION_EQUAL);
+        this.threshold = 0;
+
+        TextView thresholdTextView = (TextView) findViewById(R.id.selectedThresholdTextView);
+        thresholdTextView.setText(String.format(getString(R.string.thresholdValueText), 0));  // Init with 0!
+
+        SeekBar thresholdSeekBar = (SeekBar) findViewById(R.id.thresholdSeekBar);
+        thresholdSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
            @Override
-           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                TextView thresholdTextView = (TextView) findViewById(R.id.selectedThresholdTextView);
+                thresholdTextView.setText(String.format(getString(R.string.thresholdValueText), progress));
            }
 
            @Override
-           public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
            }
 
            @Override
-           public void afterTextChanged(Editable s) {
-               t.threshold = Integer.parseInt(s.toString());  // Piggy thing!
-
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                t.threshold = seekBar.getProgress();
            }
        });
     }

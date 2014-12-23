@@ -14,7 +14,7 @@
     <string name="blueLedText">Blue Led</string>
     <string name="redLedText">Red Led</string>
     <string name="yellowLedText">Yellow Led</string>
-    <string name="maximumThresholdValue">Maximum possibl evalue is 65535.</string>
+    <string name="thresholdValueText">Selected threshold value is: %1$d.</string>
     <string name="uriPlaceholderText">http://node.something.net/foo</string>
 
 </resources>

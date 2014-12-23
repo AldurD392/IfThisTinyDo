@@ -148,29 +148,28 @@
                 />
     </RadioGroup>
 
-    <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/thresholdTextField"
-            android:layout_below="@+id/operatorRadioGroup"
-            android:layout_centerHorizontal="true"/>
-
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/maximumThresholdValue"
-            android:id="@+id/maximumThresholdText"
-            android:layout_below="@id/thresholdTextField"
+            android:text="@string/thresholdValueText"
+            android:id="@+id/selectedThresholdTextView"
+            android:layout_below="@id/operatorRadioGroup"
             android:layout_centerHorizontal="true"/>
+
+    <SeekBar
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/thresholdSeekBar"
+            android:layout_below="@+id/selectedThresholdTextView"
+            android:layout_centerHorizontal="true"
+            android:max="65535"/>
 
     <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"
-            android:layout_below="@+id/maximumThresholdText"
+            android:layout_below="@+id/thresholdSeekBar"
             android:id="@+id/thresholdSeparator"/>
 
     <TextView

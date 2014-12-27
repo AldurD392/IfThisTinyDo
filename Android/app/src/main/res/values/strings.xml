@@ -4,7 +4,8 @@
     <string name="app_name">IfThisTinyDo</string>
     <string name="action_settings">Settings</string>
     <string name="sendRuleButton">Send rule</string>
-    <string name="remoteUriText">Remote URI</string>
+    <string name="remoteUriText">Remote URI:</string>
+    <string name="remoteProxyText">Proxy Address:</string>
     <string name="thresholdTextViewText">...detects a value:</string>
     <string name="sensorTextViewText">If this sensor...</string>
     <string name="lessThanText"><![CDATA[<]]></string>
@@ -15,6 +16,7 @@
     <string name="redLedText">Red Led</string>
     <string name="yellowLedText">Yellow Led</string>
     <string name="thresholdValueText">Selected threshold value is: %1$d.</string>
-    <string name="uriPlaceholderText">http://node.something.net/foo</string>
+    <string name="uriPlaceholderText">http://[fec0::4]:61616/rl</string>
+    <string name="proxyPlaceholderText">192.168.1.15:8080</string>
 
 </resources>

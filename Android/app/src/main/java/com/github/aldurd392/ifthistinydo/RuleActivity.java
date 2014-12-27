@@ -10,15 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import android.os.AsyncTask;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStream;
+import java.net.*;
 
 
 public class RuleActivity extends ActionBarActivity
@@ -31,6 +28,7 @@ public class RuleActivity extends ActionBarActivity
     protected final byte action = action_const.getActionConst(action_const.LED);  // In this first implementation action is fixed!
 
     public String uri;
+    public String proxyAddress;
     public int threshold = 0;
 
     public enum sensor_const {
@@ -146,30 +144,36 @@ public class RuleActivity extends ActionBarActivity
         @Override
         protected Object doInBackground(Object[] params){
 
-            URL url = null;
+            String[] splitProxy = proxyAddress.split(":");
+            Proxy proxy;
+            if (splitProxy.length == 1) {
+                proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(splitProxy[0], 80));
+            } else {
+                proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(splitProxy[0], Integer.parseInt(splitProxy[1])));
+            }
+
+            URL url;
             try {
-                url = new URL("http://www.google.it");
+//                url = new URL("http://[fec0::4]:61616/rl");
+                url = new URL(uri);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                return null;
             }
 
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-
-            HttpPut httpPut = new HttpPut(url.toString());
-            HttpResponse response = null;
-            try{
-                response = httpClient.execute(httpPut);
+            HttpURLConnection urlConnection = null;
+            try {
+                urlConnection = (HttpURLConnection) url.openConnection(proxy);
+//                urlConnection.setRequestMethod("PUT");
+//                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                urlConnection.getInputStream();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
-
-            int return_code = 0;
-            try{
-                return_code = response.getStatusLine().getStatusCode();
-            } catch (NullPointerException e){
-                e.printStackTrace();
-            }
-            System.out.println(return_code);
 
             return null;
         }
@@ -244,6 +248,7 @@ public class RuleActivity extends ActionBarActivity
         final RuleActivity t = this;
 
         EditText uriText = (EditText) findViewById(R.id.uriTextField);
+        uri = getString(R.string.uriPlaceholderText);
         uriText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -256,6 +261,22 @@ public class RuleActivity extends ActionBarActivity
                 t.uri = s.toString();  // Piggy thing!
             }
         });
+
+        EditText proxyText = (EditText) findViewById(R.id.proxyTextField);
+        proxyAddress = getString(R.string.proxyPlaceholderText);
+        proxyText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                t.proxyAddress = s.toString();  // Piggy thing!
+            }
+        });
+
 
         /* Set default values: */
         this.sensor = sensor_const.getSensorConst(sensor_const.SENSOR_VOLTAGE);

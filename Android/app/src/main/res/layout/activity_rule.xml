@@ -26,11 +26,29 @@
             android:inputType="textUri|textWebEmailAddress"
             android:hint="@string/uriPlaceholderText"/>
 
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/remoteProxyText"
+            android:id="@+id/proxyTextView"
+            android:layout_below="@+id/uriTextField"
+            android:layout_centerHorizontal="true"/>
+
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/proxyTextField"
+            android:layout_below="@+id/proxyTextView"
+            android:layout_centerHorizontal="true"
+            android:inputType="textUri|textWebEmailAddress"
+            android:hint="@string/proxyPlaceholderText"/>
+
     <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"
-            android:layout_below="@+id/uriTextField"
+            android:layout_below="@+id/proxyTextField"
             android:id="@+id/uriSeparator"/>
 
    <TextView

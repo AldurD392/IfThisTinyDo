@@ -53,12 +53,9 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
     uint32_t rule = 0;  
     uint32_t temp_rule = 0;  
 
-    void task turnOnLeds() {
-        uint8_t val = call Leds.get();
-        call Leds.set(7);
+    void task returnRule() {
         lock = FALSE;
-        signal ReadResource.getDone(SUCCESS, temp_id, 0,
-                (uint8_t*)&val, sizeof(uint8_t));
+        signal ReadResource.getDone(SUCCESS, temp_id, 0, (uint32_t*)&rule, sizeof(uint32_t));
     };
 
     command int ReadResource.get(coap_tid_t id) {
@@ -66,7 +63,7 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
             lock = TRUE;
 
             temp_id = id;
-            post turnOnLeds();
+            post returnRule();
             return COAP_SPLITPHASE;
         } else {
             return COAP_RESPONSE_503;

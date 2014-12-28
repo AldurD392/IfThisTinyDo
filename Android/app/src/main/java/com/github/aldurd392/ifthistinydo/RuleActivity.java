@@ -8,14 +8,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 
 import android.os.AsyncTask;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.*;
+
+
+import static android.view.View.VISIBLE;
+import static android.view.View.GONE;
+
+
 
 
 public class RuleActivity extends ActionBarActivity
@@ -139,7 +144,28 @@ public class RuleActivity extends ActionBarActivity
         new HttpCommandSend().execute();
     }
 
-    public class HttpCommandSend extends AsyncTask {
+    public class HttpCommandSend extends AsyncTask <Object, Object, Object>{
+
+        private ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        private RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+
+        private void disableEnableControls(boolean enable, ViewGroup vg){
+            for (int i = 0; i < vg.getChildCount(); i++){
+                View child = vg.getChildAt(i);
+                if (child.getId() != R.id.progressBar) {
+                    child.setEnabled(enable);
+                }
+                if (child instanceof ViewGroup){
+                    disableEnableControls(enable, (ViewGroup)child);
+                }
+            }
+        }
+
+        @Override
+        protected void onPreExecute(){
+            disableEnableControls(false, relativeLayout);
+            progressBar.setVisibility(VISIBLE);
+        }
 
         @Override
         protected Object doInBackground(Object[] params){
@@ -177,6 +203,13 @@ public class RuleActivity extends ActionBarActivity
 
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Object result) {
+            disableEnableControls(true, relativeLayout);
+            progressBar.setVisibility(GONE);
+        }
+
     }
 
     public void ledToggleSelected(View view) {
@@ -258,7 +291,11 @@ public class RuleActivity extends ActionBarActivity
 
             @Override
             public void afterTextChanged(Editable s) {
-                t.uri = s.toString();  // Piggy thing!
+               if (s.toString().equals("")){
+                   t.uri = getString(R.string.uriPlaceholderText);
+               } else{
+                   t.uri = s.toString();  // Piggy thing!
+               }
             }
         });
 
@@ -273,7 +310,12 @@ public class RuleActivity extends ActionBarActivity
 
             @Override
             public void afterTextChanged(Editable s) {
-                t.proxyAddress = s.toString();  // Piggy thing!
+                if (s.toString().equals("")){
+                    t.proxyAddress = getString(R.string.proxyPlaceholderText);
+                }
+                else {
+                    t.proxyAddress = s.toString();  // Piggy thing!
+                }
             }
         });
 

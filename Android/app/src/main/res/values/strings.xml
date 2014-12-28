@@ -18,5 +18,11 @@
     <string name="thresholdValueText">Selected threshold value is: %1$d.</string>
     <string name="uriPlaceholderText">http://[fec0::4]:61616/rl</string>
     <string name="proxyPlaceholderText">192.168.1.15:8080</string>
+    <string name="voltageText">Voltage</string>
+    <string name="humidityText">Humidity</string>
+    <string name="temperatureText">Temperature</string>
+    <string name="lightText">Light</string>
+
+
 
 </resources>

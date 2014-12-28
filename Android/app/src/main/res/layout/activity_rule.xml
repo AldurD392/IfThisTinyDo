@@ -1,233 +1,242 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context=".RuleActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".RuleActivity">
 
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/remoteUriText"
-            android:id="@+id/uriTextView"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/uriTextField"
-            android:layout_below="@+id/uriTextView"
-            android:layout_centerHorizontal="true"
-            android:inputType="textUri|textWebEmailAddress"
-            android:hint="@string/uriPlaceholderText"/>
-
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/remoteProxyText"
-            android:id="@+id/proxyTextView"
-            android:layout_below="@+id/uriTextField"
-            android:layout_centerHorizontal="true"/>
-
-    <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/proxyTextField"
-            android:layout_below="@+id/proxyTextView"
-            android:layout_centerHorizontal="true"
-            android:inputType="textUri|textWebEmailAddress"
-            android:hint="@string/proxyPlaceholderText"/>
-
-    <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:layout_below="@+id/proxyTextField"
-            android:id="@+id/uriSeparator"/>
-
-   <TextView
+        <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/sensorTextViewText"
-            android:id="@+id/sensorTextView"
-            android:layout_below="@+id/uriSeparator"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
             />
 
-    <RadioGroup
+        <TextView
+            android:id="@+id/uriTextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorTextView"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/sensorRadioGroup">
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/remoteUriText"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Voltage"
-                android:id="@+id/voltageRadioButton"
-                android:checked="true"
-                android:layout_gravity="center_horizontal|right"
-                />
+        <EditText
+            android:id="@+id/uriTextField"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/uriTextView"
+            android:layout_centerHorizontal="true"
+            android:hint="@string/uriPlaceholderText"
+            android:inputType="textUri|textWebEmailAddress" />
 
-        <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Humidity"
-                android:id="@+id/humRadioButton"
-                android:checked="false"
-                android:layout_gravity="center_horizontal|right"
-                />
+        <TextView
+            android:id="@+id/proxyTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/uriTextField"
+            android:layout_centerHorizontal="true"
+            android:text="@string/remoteProxyText"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Temperature"
-                android:id="@+id/tempRadioButton"
-                android:checked="false"
-                android:layout_gravity="center_horizontal|right"
-                />
+        <EditText
+            android:id="@+id/proxyTextField"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/proxyTextView"
+            android:layout_centerHorizontal="true"
+            android:hint="@string/proxyPlaceholderText"
+            android:inputType="textUri|textWebEmailAddress" />
 
-        <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Light"
-                android:id="@+id/lightRadioButton"
-                android:checked="false"
-                android:layout_gravity="center_horizontal|right"
-                />
-    </RadioGroup>
-
-    <View
+        <View
+            android:id="@+id/uriSeparator"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:layout_below="@+id/sensorRadioGroup"
-            android:id="@+id/sensorSeparator"/>
+            android:layout_below="@+id/proxyTextField"
+            android:background="@android:color/darker_gray" />
 
-    <Button
+        <TextView
+            android:id="@+id/sensorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/uriSeparator"
+            android:text="@string/sensorTextViewText"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <RadioGroup
+            android:id="@+id/sensorRadioGroup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sendRuleButton"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/sensorTextView">
+
+            <RadioButton
+                android:id="@+id/voltageRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|end"
+                android:checked="true"
+                android:text="@string/voltageText" />
+
+            <RadioButton
+                android:id="@+id/humRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|end"
+                android:checked="false"
+                android:text="@string/humidityText" />
+
+            <RadioButton
+                android:id="@+id/tempRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|end"
+                android:checked="false"
+                android:text="@string/temperatureText" />
+
+            <RadioButton
+                android:id="@+id/lightRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|end"
+                android:checked="false"
+                android:text="@string/lightText" />
+        </RadioGroup>
+
+        <View
+            android:id="@+id/sensorSeparator"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/sensorRadioGroup"
+            android:background="@android:color/darker_gray" />
+
+        <Button
             android:id="@+id/button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:onClick="onSendRuleClicked"/>
+            android:layout_below="@+id/redLedSwitch"
+            android:onClick="onSendRuleClicked"
+            android:text="@string/sendRuleButton" />
 
-    <TextView
+        <TextView
+            android:id="@+id/thresholdTextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/thresholdTextViewText"
-            android:id="@+id/thresholdTextView"
             android:layout_below="@+id/sensorSeparator"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:text="@string/thresholdTextViewText"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <RadioGroup
+        <RadioGroup
+            android:id="@+id/operatorRadioGroup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/thresholdTextView"
             android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:id="@+id/operatorRadioGroup"
-            >
+            android:orientation="horizontal">
 
-        <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lessThanText"
+            <RadioButton
                 android:id="@+id/lessThanRadioButton"
-                android:checked="false"
-                android:layout_weight="1"
-                />
-
-        <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/equalText"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/lessThanText" />
+
+            <RadioButton
                 android:id="@+id/equalRadioButton"
-                android:checked="true"
-                android:layout_weight="1"
-                />
-
-        <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/greaterThanText"
-                android:id="@+id/greaterThanRadioButton"
-                android:checked="false"
                 android:layout_weight="1"
-                />
-    </RadioGroup>
+                android:checked="true"
+                android:text="@string/equalText" />
 
-    <TextView
+            <RadioButton
+                android:id="@+id/greaterThanRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/greaterThanText" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/selectedThresholdTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/thresholdValueText"
-            android:id="@+id/selectedThresholdTextView"
             android:layout_below="@id/operatorRadioGroup"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:text="@string/thresholdValueText"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <SeekBar
+        <SeekBar
+            android:id="@+id/thresholdSeekBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/thresholdSeekBar"
             android:layout_below="@+id/selectedThresholdTextView"
             android:layout_centerHorizontal="true"
-            android:max="65535"/>
+            android:max="65535" />
 
-    <View
+        <View
+            android:id="@+id/thresholdSeparator"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
             android:layout_below="@+id/thresholdSeekBar"
-            android:id="@+id/thresholdSeparator"/>
+            android:background="@android:color/darker_gray" />
 
-    <TextView
+        <TextView
+            android:id="@+id/thenTextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/tinyDoText"
-            android:id="@+id/thenTextView"
             android:layout_below="@+id/thresholdSeparator"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:text="@string/tinyDoText"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/blueLedText"
+        <Switch
             android:id="@+id/blueLedSwitch"
-            android:layout_below="@+id/thenTextView"
-            android:layout_alignParentStart="true"
-            android:checked="false"
-            android:onClick="ledToggleSelected"/>
-
-    <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/yellowLedText"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/thenTextView"
+            android:checked="false"
+            android:onClick="ledToggleSelected"
+            android:text="@string/blueLedText" />
+
+        <Switch
             android:id="@+id/yellowLedSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/thenTextView"
             android:layout_centerHorizontal="true"
+            android:checked="false"
             android:onClick="ledToggleSelected"
-            android:checked="false"/>
+            android:text="@string/yellowLedText" />
 
-    <Switch
+        <Switch
+            android:id="@+id/redLedSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/redLedText"
-            android:id="@+id/redLedSwitch"
-            android:checked="false"
-            android:layout_below="@+id/thenTextView"
             android:layout_alignParentEnd="true"
+            android:layout_below="@+id/thenTextView"
+            android:checked="false"
             android:onClick="ledToggleSelected"
-            />
+            android:text="@string/redLedText" />
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

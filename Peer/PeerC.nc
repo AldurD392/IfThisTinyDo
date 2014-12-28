@@ -5,6 +5,13 @@
 #include <lib6lowpan/lib6lowpan.h>
 #include <lib6lowpan/ip.h>
 
+#include "net.h"
+#include "resource.h"
+
+#ifndef COAP_SERVER_PORT
+#define COAP_SERVER_PORT COAP_DEFAULT_PORT
+#endif
+
 module PeerC {
     uses {
         interface Boot;
@@ -22,19 +29,22 @@ module PeerC {
         uint8_t i;
         call RadioControl.start();
 
-        // needs to be before registerResource to setup context:
-        call CoAPServer.bind(COAP_SERVER_PORT);
+        call CoAPServer.setupContext(COAP_SERVER_PORT);
+        call CoAPServer.registerResources();
 
-        call CoAPServer.registerWellknownCore();
-        for (i=0; i < NUM_URIS; i++) {
-            call CoAPServer.registerResource(
-                    uri_key_map[i].uri,
-                    uri_key_map[i].urilen - 1,
-                    uri_key_map[i].mediatype,
-                    uri_key_map[i].writable,
-                    uri_key_map[i].splitphase,
-                    uri_key_map[i].immediately);
-        }
+        /* // needs to be before registerResource to setup context: */
+        /* call CoAPServer.bind(COAP_SERVER_PORT); */
+
+        /* call CoAPServer.registerWellknownCore(); */
+        /* for (i=0; i < NUM_URIS; i++) { */
+            /* call CoAPServer.registerResource( */
+                    /* uri_key_map[i].uri, */
+                    /* uri_key_map[i].urilen - 1, */
+                    /* uri_key_map[i].mediatype, */
+                    /* uri_key_map[i].writable, */
+                    /* uri_key_map[i].splitphase, */
+                    /* uri_key_map[i].immediately); */
+        /* } */
     }
 
 

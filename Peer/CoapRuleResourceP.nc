@@ -31,12 +31,15 @@
  */
 
 #include <pdu.h>
+#include <async.h>
+#include <mem.h>
+#include <resource.h>
+#include <uri.h>
 
 generic module CoapRuleResourceP(uint8_t uri_key) {
-    provides interface ReadResource;
-    provides interface WriteResource;
-   
+    provides interface CoapResource;
     uses {
+        interface CoAPServer;
         interface Leds;
         interface Read<uint16_t> as LightSensor;
         interface Read<uint16_t> as HumSensor;
@@ -47,47 +50,132 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
 
 } implementation {
 
-    bool lock = FALSE;
     coap_tid_t temp_id;
 
     uint32_t rule = 0;  
     uint32_t temp_rule = 0;  
 
-    void task returnRule() {
-        lock = FALSE;
-        signal ReadResource.getDone(SUCCESS, temp_id, 0, (uint32_t*)&rule, sizeof(uint32_t));
-    };
+    unsigned char buf[2];
+    size_t size;
+    unsigned char *data;
+    coap_pdu_t *temp_request;
+    coap_pdu_t *response;
+    bool lock = FALSE; //TODO: atomic
+    coap_async_state_t *temp_async_state = NULL;
+    coap_resource_t *temp_resource = NULL;
+    unsigned int temp_content_format;
+    int temp_rc;
+    bool temp_created;
 
-    command int ReadResource.get(coap_tid_t id) {
+    command error_t CoapResource.initResourceAttributes(coap_resource_t *r) {
+#ifdef COAP_CONTENT_TYPE_PLAIN
+        coap_add_attr(r, (unsigned char *)"ct", 2, (unsigned char *)"0", 1, 0);
+#endif
+
+        // default ETAG (ASCII characters)
+        r->etag = 0x61;
+
+        return SUCCESS;
+    }
+
+    /////////////////////
+    // GET:
+    task void getMethod() {
+        response = coap_new_pdu();
+        response->hdr->code = COAP_RESPONSE_CODE(205);
+
+        coap_add_option(response, COAP_OPTION_ETAG,
+                coap_encode_var_bytes(buf, temp_resource->etag), buf);
+
+        coap_add_option(response, COAP_OPTION_CONTENT_TYPE,
+                coap_encode_var_bytes(buf, temp_content_format), buf);
+
+        signal CoapResource.methodDone(SUCCESS,
+                temp_async_state,
+                temp_request,
+                response,
+                temp_resource);
+        lock = FALSE;
+    }
+
+    command int CoapResource.getMethod(coap_async_state_t* async_state,
+            coap_pdu_t* request,
+            struct coap_resource_t *resource,
+            unsigned int content_format) {
         if (lock == FALSE) {
             lock = TRUE;
 
-            temp_id = id;
-            post returnRule();
+            temp_async_state = async_state;
+            temp_request = request;
+            temp_resource = resource;
+            temp_content_format = COAP_MEDIATYPE_TEXT_PLAIN;
+
+            post getMethod();
             return COAP_SPLITPHASE;
         } else {
             return COAP_RESPONSE_503;
         }
     }
 
-    void task setRuleDone() {
-        lock = FALSE;
-        rule = temp_rule;
-        call SamplingTimer.startPeriodic(TIME_SAMPLING_MS);
-        signal WriteResource.putDone(SUCCESS, temp_id, 0);
-    };
-
-    command int WriteResource.put(uint8_t *val, size_t buflen, coap_tid_t id) {
-        if (lock == FALSE && buflen == sizeof(uint32_t)) {
-            lock = TRUE;
-            temp_id = id;
-            memcpy(&temp_rule, val, buflen);
-            post setRuleDone();
-            return COAP_SPLITPHASE;
-        } else {
-            return COAP_RESPONSE_503;
-        }
+    command int CoapResource.postMethod(coap_async_state_t* async_state,
+            coap_pdu_t* request,
+            struct coap_resource_t *resource,
+            unsigned int content_format) {
+        // TODO
+        return 0;
     }
+    
+    command int CoapResource.putMethod(coap_async_state_t* async_state,
+            coap_pdu_t* request,
+            struct coap_resource_t *resource,
+            unsigned int content_format) {
+        // TODO
+        return 0;
+    }
+
+    command int CoapResource.deleteMethod(coap_async_state_t* async_state,
+            coap_pdu_t* request,
+            struct coap_resource_t *resource) {
+        // TODO
+        return 0;
+    }
+
+
+    /* void task returnRule() { */
+        /* lock = FALSE; */
+        /* signal ReadResource.getDone(SUCCESS, temp_id, 0, (uint32_t*)&rule, sizeof(uint32_t)); */
+    /* }; */
+
+    /* command int ReadResource.get(coap_tid_t id) { */
+        /* if (lock == FALSE) { */
+            /* lock = TRUE; */
+
+            /* temp_id = id; */
+            /* post returnRule(); */
+            /* return COAP_SPLITPHASE; */
+        /* } else { */
+            /* return COAP_RESPONSE_503; */
+        /* } */
+    /* } */
+
+    /* void task setRuleDone() { */
+        /* lock = FALSE; */
+        /* rule = temp_rule; */
+        /* call SamplingTimer.startPeriodic(TIME_SAMPLING_MS); */
+        /* signal WriteResource.putDone(SUCCESS, temp_id, 0); */
+    /* }; */
+
+    /* command int WriteResource.put(uint8_t *val, size_t buflen, coap_tid_t id) { */
+        /* if (lock == FALSE && buflen == sizeof(uint32_t)) { */
+            /* lock = TRUE; */
+            /* temp_id = id; */
+            /* memcpy(&temp_rule, val, buflen); */
+            /* post setRuleDone(); */
+            /* return COAP_SPLITPHASE; */
+        /* } else { */
+            /* return COAP_RESPONSE_503; */
+        /* } */
+    /* } */
 
     // Helper functions to eval the rules.
     void performSensorRead() {

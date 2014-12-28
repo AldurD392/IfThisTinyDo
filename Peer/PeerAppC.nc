@@ -3,6 +3,8 @@
 #include <lib6lowpan/6lowpan.h>
 #include "tinyos_coap_resources.h"
 
+#include <iprouting.h>
+
 configuration PeerAppC 
 { 
 } 
@@ -30,21 +32,20 @@ implementation {
     // Boot
     App.Boot -> MainC;
     App.Init <- MainC.SoftwareInit;
+    App.CoAPServer -> CoapUdpServerC;
 
     // Radio and Coap
     App.RadioControl ->  IPStackC;
-    App.CoAPServer -> CoapUdpServerC;
     CoapUdpServerC.LibCoapServer -> LibCoapAdapterC.LibCoapServer;
-    CoapUdpServerC.Init <- MainC.SoftwareInit;
     LibCoapAdapterC.UDPServer -> UdpServerSocket;
+    CoapUdpServerC.CoapResource[KEY_RULE] -> CoapRuleResource.CoapResource;
 
     // Coap Resources
     CoapRuleResource.Leds -> LedsC;
-    CoapUdpServerC.ReadResource[KEY_RULE]  -> CoapRuleResource.ReadResource;
-    CoapUdpServerC.WriteResource[KEY_RULE] -> CoapRuleResource.WriteResource;
     CoapRuleResource.SamplingTimer -> SamplingTimer;
     CoapRuleResource.TempSensor -> TempHumSensor.Temperature;
     CoapRuleResource.HumSensor -> TempHumSensor.Humidity;
     CoapRuleResource.LightSensor -> LightSensor;
     CoapRuleResource.VoltSensor -> VoltSensor;
+    CoapRuleResource.CoAPServer -> CoapUdpServerC;  // for POST/DELETE XXX
 }

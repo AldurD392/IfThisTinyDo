@@ -5,16 +5,14 @@
 
 #include <iprouting.h>
 
-configuration PeerAppC 
-{ 
-} 
-implementation { 
+configuration PeerAppC { 
+} implementation { 
     components PeerC as App, MainC;
     
     // Coap Library Components
     components LibCoapAdapterC;
     components IPStackC;
-    components RPLRoutingC;  // Can I be deleted?
+    components RPLRoutingC;
     components CoapUdpServerC;
     components new UdpSocketC() as UdpServerSocket;
 
@@ -26,12 +24,10 @@ implementation {
     // Sensors components
     components new SensirionSht11C() as TempHumSensor; // Humidity and Temperature
     components new HamamatsuS1087ParC() as LightSensor; // Light
-    components new VoltageC() as VoltSensor;
 
     // Wiring
     // Boot
     App.Boot -> MainC;
-    App.Init <- MainC.SoftwareInit;
     App.CoAPServer -> CoapUdpServerC;
 
     // Radio and Coap
@@ -46,6 +42,4 @@ implementation {
     CoapRuleResource.TempSensor -> TempHumSensor.Temperature;
     CoapRuleResource.HumSensor -> TempHumSensor.Humidity;
     CoapRuleResource.LightSensor -> LightSensor;
-    CoapRuleResource.VoltSensor -> VoltSensor;
-    CoapRuleResource.CoAPServer -> CoapUdpServerC;  // for POST/DELETE XXX
 }

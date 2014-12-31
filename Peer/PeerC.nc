@@ -20,37 +20,13 @@ module PeerC {
         interface SplitControl as RadioControl;
         interface CoAPServer;
     }
-
-    provides interface Init;
 } implementation {
-
     // Boot event.
     event void Boot.booted() {
-        uint8_t i;
         call RadioControl.start();
 
         call CoAPServer.setupContext(COAP_SERVER_PORT);
         call CoAPServer.registerResources();
-
-        /* // needs to be before registerResource to setup context: */
-        /* call CoAPServer.bind(COAP_SERVER_PORT); */
-
-        /* call CoAPServer.registerWellknownCore(); */
-        /* for (i=0; i < NUM_URIS; i++) { */
-            /* call CoAPServer.registerResource( */
-                    /* uri_key_map[i].uri, */
-                    /* uri_key_map[i].urilen - 1, */
-                    /* uri_key_map[i].mediatype, */
-                    /* uri_key_map[i].writable, */
-                    /* uri_key_map[i].splitphase, */
-                    /* uri_key_map[i].immediately); */
-        /* } */
-    }
-
-
-    // Init event.
-    command error_t Init.init() {
-        return SUCCESS;
     }
 
     // And radios...
@@ -60,7 +36,5 @@ module PeerC {
         }
     }
 
-    event void RadioControl.stopDone(error_t e) {
-
-    }
+    event void RadioControl.stopDone(error_t e) { }
 }

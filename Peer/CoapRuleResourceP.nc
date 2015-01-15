@@ -47,43 +47,19 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
 
 } implementation {
 
-    bool lock = FALSE;
-    coap_tid_t temp_id;
-
     uint32_t rule = 0;  
-    uint32_t temp_rule = 0;  
-
-    void task returnRule() {
-        lock = FALSE;
-        signal ReadResource.getDone(SUCCESS, temp_id, 0, (uint32_t*)&rule, sizeof(uint32_t));
-    };
 
     command int ReadResource.get(coap_tid_t id) {
-        if (lock == FALSE) {
-            lock = TRUE;
-
-            temp_id = id;
-            post returnRule();
-            return COAP_SPLITPHASE;
-        } else {
-            return COAP_RESPONSE_503;
-        }
+        signal ReadResource.getDone(SUCCESS, id, 0, (uint32_t*)&rule, sizeof(uint32_t));
+        return COAP_RESPONSE_CODE(203);
     }
 
-    void task setRuleDone() {
-        lock = FALSE;
-        rule = temp_rule;
-        call SamplingTimer.startPeriodic(TIME_SAMPLING_MS);
-        signal WriteResource.putDone(SUCCESS, temp_id, 0);
-    };
-
     command int WriteResource.put(uint8_t *val, size_t buflen, coap_tid_t id) {
-        if (lock == FALSE && buflen == sizeof(uint32_t)) {
-            lock = TRUE;
-            temp_id = id;
-            memcpy(&temp_rule, val, buflen);
-            post setRuleDone();
-            return COAP_SPLITPHASE;
+        if (buflen == sizeof(uint32_t)) {
+            memcpy(&rule, val, buflen);
+            call SamplingTimer.startPeriodic(TIME_SAMPLING_MS);
+            signal WriteResource.putDone(SUCCESS, id, 0);
+            return COAP_RESPONSE_201;
         } else {
             return COAP_RESPONSE_503;
         }
@@ -134,6 +110,8 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
             dbg("Error", "Unkonwn action received!");
             call Leds.set(4);
         }
+
+        call SamplingTimer.stop();
     }
 
    event void LightSensor.readDone(error_t result, uint16_t val) {

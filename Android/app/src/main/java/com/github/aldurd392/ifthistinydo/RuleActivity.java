@@ -1,19 +1,18 @@
 package com.github.aldurd392.ifthistinydo;
 
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 
 import android.os.AsyncTask;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 
 
@@ -88,6 +87,19 @@ public class RuleActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rule);
         this.setListeners();
+
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(getResources().getColor(R.color.accent));
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary)));
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        return false;
     }
 
     @Override
@@ -190,9 +202,31 @@ public class RuleActivity extends ActionBarActivity
             HttpURLConnection urlConnection = null;
             try {
                 urlConnection = (HttpURLConnection) url.openConnection(proxy);
-//                urlConnection.setRequestMethod("PUT");
-//                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                urlConnection.getInputStream();
+                urlConnection.setRequestMethod("PUT");
+                urlConnection.setDoOutput(true);
+//                urlConnection.setDoInput(false);
+
+                //Send request
+                DataOutputStream wr = new DataOutputStream (
+                        urlConnection.getOutputStream ());
+                wr.writeInt(268431808);
+                wr.flush ();
+                wr.close ();
+
+                System.out.println(urlConnection.toString());
+                System.out.println(urlConnection.getResponseCode());
+
+                //Get Response
+//                InputStream is = urlConnection.getInputStream();
+//                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+//                String line;
+//                StringBuffer response = new StringBuffer();
+//                while((line = rd.readLine()) != null) {
+//                    response.append(line);
+//                    response.append('\r');
+//                }
+//                rd.close();
+//                return response.toString();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

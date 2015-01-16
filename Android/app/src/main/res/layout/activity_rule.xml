@@ -190,7 +190,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/selectedThresholdTextView"
             android:layout_centerHorizontal="true"
-            android:max="65535" />
+            android:max="3000" />
 
         <View
             android:id="@+id/thresholdSeparator"

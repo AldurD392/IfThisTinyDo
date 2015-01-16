@@ -14,6 +14,8 @@ import android.os.AsyncTask;
 
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 
 import static android.view.View.VISIBLE;
@@ -209,7 +211,13 @@ public class RuleActivity extends ActionBarActivity
                 //Send request
                 DataOutputStream wr = new DataOutputStream (
                         urlConnection.getOutputStream ());
-                wr.writeInt(268431808);
+                int rule = makeRule();
+                byte[] rule_bytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(rule).array();
+                wr.write(rule_bytes, 0, 4);
+//                wr.write(rule >> 8);
+//                wr.write(rule >> 16);
+//                wr.write(rule >> 24);
+//                wr.writeInt(268431808);
                 wr.flush ();
                 wr.close ();
 

@@ -1,5 +1,6 @@
 package com.github.aldurd392.ifthistinydo;
 
+import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ import static android.view.View.GONE;
 
 
 
-public class RuleActivity extends ActionBarActivity
+public class RuleActivity extends Activity
                             implements RadioGroup.OnCheckedChangeListener {
 
     protected byte sensor = 0;
@@ -90,13 +91,13 @@ public class RuleActivity extends ActionBarActivity
         setContentView(R.layout.activity_rule);
         this.setListeners();
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(getResources().getColor(R.color.accent));
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary)));
-        }
+//        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+//            Window window = getWindow();
+//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//            window.setStatusBarColor(getResources().getColor(R.color.accent));
+//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary)));
+//        }
     }
 
     @Override

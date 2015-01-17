@@ -35,7 +35,7 @@
 generic module CoapRuleResourceP(uint8_t uri_key) {
     provides interface ReadResource;
     provides interface WriteResource;
-   
+
     uses {
         interface Leds;
         interface Read<uint16_t> as LightSensor;
@@ -47,11 +47,11 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
 
 } implementation {
 
-    uint32_t rule = 0;  
+    uint32_t rule = 0;
 
     command int ReadResource.get(coap_tid_t id) {
         signal ReadResource.getDone(SUCCESS, id, 0, (uint32_t*)&rule, sizeof(uint32_t));
-        return COAP_RESPONSE_CODE(203);
+        return COAP_RESPONSE_CODE(205);
     }
 
     command int WriteResource.put(uint8_t *val, size_t buflen, coap_tid_t id) {
@@ -68,7 +68,7 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
     // Helper functions to eval the rules.
     void performSensorRead() {
         uint8_t sensor = (rule >> 30) & 0x3;  // 2 first bits
-    
+
         if (sensor == SENSOR_TEMPERATURE) {
             call TempSensor.read();
         } else if (sensor == SENSOR_HUMIDITY) {
@@ -94,7 +94,7 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
             return (val == threshold);
         } else if (operator == EXPRESSION_GREATER) {
             return (val > threshold);
-        } 
+        }
 
         // Something went wrong here!
         dbg("Error", "Invalid command expression received!");
@@ -108,7 +108,7 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
             call Leds.set((rule >> 6) & 0x07);
         } else {  // Other action for future implementations / motes
             dbg("Error", "Unkonwn action received!");
-            call Leds.set(4);
+            /* call Leds.set(4); */
         }
 
         call SamplingTimer.stop();
@@ -117,23 +117,23 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
    event void LightSensor.readDone(error_t result, uint16_t val) {
         if (result == SUCCESS) {
             if (evalStatment(val)) {
-                performAction();                           
+                performAction();
             }
-        } 
+        }
     }
 
     event void HumSensor.readDone(error_t result, uint16_t val) {
         if (result == SUCCESS) {
             if (evalStatment(val)) {
-                performAction();                           
+                performAction();
             }
-        } 
+        }
     }
 
     event void TempSensor.readDone(error_t result, uint16_t val) {
         if (result == SUCCESS) {
             if (evalStatment(val)) {
-                performAction();                           
+                performAction();
             }
         }
     }
@@ -141,8 +141,8 @@ generic module CoapRuleResourceP(uint8_t uri_key) {
     event void VoltSensor.readDone(error_t result, uint16_t val) {
         if (result == SUCCESS) {
             if (evalStatment(val)) {
-                performAction();                           
+                performAction();
             }
-        } 
+        }
     }
 }

@@ -216,6 +216,7 @@
             android:layout_below="@+id/thenTextView"
             android:checked="false"
             android:onClick="ledToggleSelected"
+            android:textColor="#FF33B5E5"
             android:text="@string/blueLedText" />
 
         <Switch
@@ -226,6 +227,7 @@
             android:layout_centerHorizontal="true"
             android:checked="false"
             android:onClick="ledToggleSelected"
+            android:textColor="#CCCC00"
             android:text="@string/yellowLedText" />
 
         <Switch
@@ -236,7 +238,7 @@
             android:layout_below="@+id/thenTextView"
             android:checked="false"
             android:onClick="ledToggleSelected"
+            android:textColor="#FFFF4444"
             android:text="@string/redLedText" />
-
     </RelativeLayout>
 </ScrollView>
